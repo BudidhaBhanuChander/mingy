@@ -14,8 +14,8 @@ export default function OrderTimeLine({ order }: { order: any }) {
     };
 
     return (
-        <div className="bg-white rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-app-green mb-6">Delivery Progress</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-soft border border-app-border/60">
+            <h2 className="text-lg font-bold text-app-green mb-6">Delivery Progress</h2>
             <div className="space-y-0">
                 {allStatuses.map((status, i) => {
                     const Icon = statusIcons[status] || PackageIcon;
@@ -27,10 +27,10 @@ export default function OrderTimeLine({ order }: { order: any }) {
                     return (
                         <div key={status} className="flex gap-4">
                             <div className="flex flex-col items-center">
-                                <div className={`size-9 rounded-full flex-center shrink-0 ${isCompleted ? "bg-app-green text-white" : "bg-app-cream text-app-text-light"} ${isCurrent ? "ring-4 ring-app-green/20" : ""}`}>
+                                <div className={`size-9 rounded-full flex-center shrink-0 transition-all ${isCompleted ? "bg-gradient-to-br from-app-green-light to-app-green text-white shadow-glow-green" : "bg-app-cream text-app-text-light"} ${isCurrent ? "ring-4 ring-app-green/20 animate-pulse-soft" : ""}`}>
                                     <Icon className="size-4" />
                                 </div>
-                                {i < allStatuses.length - 1 && <div className={`w-0.5 h-12 ${i < currentIdx ? "bg-app-green" : "bg-app-border"}`} />}
+                                {i < allStatuses.length - 1 && <div className={`w-0.5 h-12 transition-colors ${i < currentIdx ? "bg-app-green" : "bg-app-border"}`} />}
                             </div>
                             <div className="pb-6">
                                 <p className={`text-sm font-semibold ${isCompleted ? "text-app-green" : "text-app-text-light"}`}>{status}</p>

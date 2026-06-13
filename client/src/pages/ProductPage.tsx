@@ -84,20 +84,21 @@ const ProductPage = () => {
                 </button>
 
                 {/* Product Details Section */}
-                <div className="bg-white/50 rounded-2xl overflow-hidden">
+                <div className="bg-white rounded-3xl overflow-hidden shadow-soft border border-app-border/60 animate-fade-in">
                     <div className="grid md:grid-cols-2 gap-0">
                         {/* left side - Image */}
-                        <div className="relative flex-center p-8 md:p-12 min-h-[320px] md:min-h-[480px]">
-                            <img src={product.image} alt={product.name} className="max-h-[360px] w-auto object-contain" />
+                        <div className="group relative flex-center p-8 md:p-12 min-h-[320px] md:min-h-[480px] bg-gradient-to-br from-app-cream to-orange-50/40 overflow-hidden">
+                            <div className="absolute size-72 rounded-full bg-app-orange/10 blur-3xl group-hover:bg-app-orange/20 transition-colors" />
+                            <img src={product.image} alt={product.name} className="relative max-h-[360px] w-auto object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-500" />
 
                             <div className="absolute top-5 left-5 flex flex-wrap gap-1.5">
                                 {product.isOrganic && (
-                                    <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-app-green text-white rounded-full">
+                                    <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-gradient-to-r from-app-green-light to-app-green text-white rounded-full shadow-glow-green">
                                         <LeafIcon className="w-3 h-3" />
                                         Organic
                                     </span>
                                 )}
-                                {product.discount > 0 && <span className="px-2.5 py-1 text-xs font-semibold bg-app-orange text-white rounded-full">{product.discount}% OFF</span>}
+                                {product.discount > 0 && <span className="px-2.5 py-1 text-xs font-bold bg-gradient-to-r from-app-orange to-app-orange-dark text-white rounded-full shadow-glow">{product.discount}% OFF</span>}
                             </div>
                         </div>
                         {/* Badges */}
@@ -106,7 +107,7 @@ const ProductPage = () => {
                         <div className="p-6 md:p-10 flex flex-col justify-center">
                             <span className="text-xs font-medium text-app-text-light tracking-wider mb-2 capitalize">{categoryLabel}</span>
 
-                            <h1 className="text-2xl md:text-3xl font-semibold text-app-green mb-3">{product.name}</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold text-app-green mb-3">{product.name}</h1>
 
                             {/* Rating */}
                             {product.rating > 0 && (
@@ -125,7 +126,7 @@ const ProductPage = () => {
 
                             {/* Price */}
                             <div className="flex items-baseline gap-3 mb-5">
-                                <span className="text-3xl md:text-4xl font-semibold text-app-green">
+                                <span className="text-3xl md:text-4xl font-bold text-app-green">
                                     {currency}
                                     {product.price.toFixed(2)}
                                 </span>
@@ -148,14 +149,14 @@ const ProductPage = () => {
                             {/* Quantity + Add to Cart */}
                             <div className="flex items-center gap-3">
                                 {/* Quantity */}
-                                <div className="flex items-center border border-app-border rounded-xl overflow-hidden">
-                                    <button onClick={handleMinus} className="p-3 hover:bg-app-cream transition-colors">
+                                <div className="flex items-center border border-app-border rounded-xl overflow-hidden bg-white shadow-soft">
+                                    <button onClick={handleMinus} className="p-3 hover:bg-app-cream active:scale-90 transition-all">
                                         <MinusIcon className="w-4 h-4" />
                                     </button>
 
                                     <span className="px-5 text-sm font-semibold min-w-[40px] text-center">{displayQuantity}</span>
 
-                                    <button onClick={handlePlus} className="p-3 hover:bg-app-cream transition-colors">
+                                    <button onClick={handlePlus} className="p-3 hover:bg-app-cream active:scale-90 transition-all">
                                         <PlusIcon className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -165,7 +166,7 @@ const ProductPage = () => {
                                         if (!inCart) addToCart(product, localQuantity);
                                     }}
                                     disabled={product.stock === 0}
-                                    className={`flex-1 py-3 font-semibold rounded-xl transition-colors flex-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] ${inCart ? "bg-app-cream text-app-green border border-app-green" : "bg-app-orange text-white hover:bg-app-orange-dark"}`}
+                                    className={`flex-1 py-3 font-semibold rounded-xl transition-all flex-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] ${inCart ? "bg-app-cream text-app-green border border-app-green" : "text-white bg-gradient-to-r from-app-orange to-app-orange-dark shadow-glow hover:-translate-y-0.5"}`}
                                 >
                                     <ShoppingCartIcon className="w-4 h-4" />
                                     {inCart ? "Added to Cart" : "Add to Cart"}
@@ -183,7 +184,7 @@ const ProductPage = () => {
                     <section className="mt-12 mb-44">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h2 className="text-2xl font-semibold text-app-green">Related Products</h2>
+                                <h2 className="text-2xl sm:text-3xl font-bold text-app-green">Related Products</h2>
                                 <p className="text-sm text-app-text-light mt-1">More from {categoryLabel}</p>
                             </div>
                             <Link className="text-sm font-semibold text-app-orange hover:text-app-orange-dark flex items-center gap-1 transition-colors" to={`/products?category=${product.category}`}>

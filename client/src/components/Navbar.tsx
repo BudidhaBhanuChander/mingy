@@ -26,47 +26,50 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-white sticky top-0 z-50 border-b border-app-border">
+        <nav className="glass sticky top-0 z-50 border-b border-app-border/70 shadow-soft">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 gap-4">
                 {/* Logo */}
-                <Link to="/" className="flex items-center gap-2 text-[22px] font-medium shrink-0">
-                    <BikeIcon size={24} /> Instacart
+                <Link to="/" className="flex items-center gap-2 text-[22px] font-bold shrink-0 group">
+                    <span className="size-9 rounded-xl bg-gradient-to-br from-app-green-light to-app-green flex-center text-white shadow-glow-green group-hover:rotate-6 transition-transform">
+                        <BikeIcon size={20} />
+                    </span>
+                    <span className="text-gradient-green">Instacart</span>
                 </Link>
 
                 <div className="w-full flex items-center justify-end gap-4 lg:gap-10">
                     {/* Nav Links - Desktop */}
-                    <div className="hidden md:flex items-center gap-6 text-sm text-zinc-600">
-                        <Link to="/">Home</Link>
-                        <Link to="/products">Products</Link>
-                        <Link to="/deals" className="text-app-orange">
+                    <div className="hidden md:flex items-center gap-7 text-sm font-medium text-zinc-600">
+                        <Link to="/" className="link-underline hover:text-app-green">Home</Link>
+                        <Link to="/products" className="link-underline hover:text-app-green">Products</Link>
+                        <Link to="/deals" className="link-underline font-semibold text-app-orange">
                             Deals
                         </Link>
                     </div>
                     {/* Search */}
                     <form onSubmit={handleSearch} className="hidden sm:flex flex-1 max-w-sm text-xs sm:text-sm">
-                        <div className="relative w-full">
-                            <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-                            <input type="text" placeholder="Search for groceries..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-8 p-2 bg-orange-50 rounded-full ring ring-app-orange/15 focus:ring-app-orange/30" />
+                        <div className="relative w-full group">
+                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400 group-focus-within:text-app-orange transition-colors" />
+                            <input type="text" placeholder="Search for groceries..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-3 py-2.5 bg-orange-50/70 rounded-full ring-1 ring-app-orange/15 focus:ring-2 focus:ring-app-orange/40 focus:bg-white transition-all" />
                         </div>
                     </form>
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-3">
                         {/* Cart */}
-                        <button className="relative p-2 rounded-xl" onClick={() => setIsCartOpen(true)}>
-                            <ShoppingCartIcon className="size-5 text-zinc-900" />
-                            {cartCount > 0 && <span className="absolute -top-1 -right-1 size-4 bg-app-orange text-white text-[10px] rounded-full flex-center">{cartCount}</span>}
+                        <button className="relative p-2.5 rounded-xl hover:bg-orange-50 active:scale-95" onClick={() => setIsCartOpen(true)}>
+                            <ShoppingCartIcon className="size-5 text-app-green" />
+                            {cartCount > 0 && <span className="absolute -top-0.5 -right-0.5 size-4.5 min-w-4.5 px-1 bg-gradient-to-br from-app-orange to-app-orange-dark text-white text-[10px] font-bold rounded-full flex-center shadow-glow animate-glow">{cartCount}</span>}
                         </button>
                         {/* User */}
                         <div className="relative">
                             {user ? (
-                                <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2 p-2">
-                                    <div className="size-7 rounded-full bg-green-950 text-white flex-center">{user.name.charAt(0).toUpperCase()}</div>
-                                    <ChevronDownIcon className="size-3 text-zinc-500" />
+                                <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2 p-1.5 rounded-full hover:bg-app-cream-dark/60 active:scale-95">
+                                    <div className="size-8 rounded-full bg-gradient-to-br from-app-green-light to-app-green text-white font-semibold flex-center shadow-glow-green">{user.name.charAt(0).toUpperCase()}</div>
+                                    <ChevronDownIcon className={`size-3.5 text-zinc-500 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
                                 </button>
                             ) : (
                                 <div className="flex-center gap-2">
-                                    <Link to="/login" className="hidden md:flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-950 rounded-full hover:bg-green-950-light transition-colors">
+                                    <Link to="/login" className="hidden md:flex btn-green !px-5 !py-2 text-sm">
                                         <UserIcon size={16} /> Sign In
                                     </Link>
                                     {userMenuOpen ? <XIcon className="md:hidden" onClick={() => setUserMenuOpen(!userMenuOpen)} /> : <MenuIcon className="md:hidden" onClick={() => setUserMenuOpen(!userMenuOpen)} />}
@@ -76,7 +79,7 @@ const Navbar = () => {
                             {userMenuOpen && (
                                 <>
                                     <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
-                                    <div className="absolute right-0 mt-2.5 w-56 bg-white rounded-xl shadow-lg border border-app-border py-2 z-50 animate-fade-in">
+                                    <div className="absolute right-0 mt-2.5 w-56 bg-white rounded-2xl shadow-lift border border-app-border py-2 z-50 animate-scale-in origin-top-right">
                                         {user && (
                                             <div className="px-4 py-2 border-b border-app-border">
                                                 <p className="text-sm font-medium text-zinc-900">{user?.name}</p>

@@ -18,16 +18,18 @@ const FlashDeals = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-app-cream">
+        <div className="min-h-screen">
             {/* Banner */}
-            <div className="bg-linear-to-r from-app-orange to-app-orange-dark text-white py-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="relative overflow-hidden bg-gradient-to-r from-app-orange via-app-orange-dark to-app-orange animate-gradient text-white py-12 shadow-lift">
+                <div className="absolute -top-10 left-1/4 size-48 rounded-full bg-white/15 blur-3xl animate-float" />
+                <div className="absolute -bottom-12 right-1/4 size-56 rounded-full bg-amber-200/20 blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-slide-in-up">
                     <div className="flex-center gap-2 mb-3">
-                        <Zap className="size-6 fill-white" />
-                        <h1 className="text-3xl font-semibold">Flash Deals</h1>
-                        <Zap className="size-6 fill-white" />
+                        <Zap className="size-7 fill-white animate-pulse-soft" />
+                        <h1 className="font-serif text-4xl">Flash Deals</h1>
+                        <Zap className="size-7 fill-white animate-pulse-soft" />
                     </div>
-                    <p className="text-white/80 max-w-md mx-auto">Limited-time offers on your favorite organic products. Grab them before they're gone!</p>
+                    <p className="text-white/90 max-w-md mx-auto">Limited-time offers on your favorite organic products. Grab them before they're gone!</p>
                 </div>
             </div>
 

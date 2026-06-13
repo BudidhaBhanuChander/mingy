@@ -7,6 +7,27 @@ const LOW_STOCK_THRESHOLD = 10;
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "grocery-delivery" });
 
+/**
+ * Fire a background event WITHOUT letting a failure break the request.
+ *
+ * Inngest is non-critical infrastructure (emails, auto-assign). If the event
+ * key is missing/invalid (401) or Inngest is unreachable, we log and move on
+ * so the customer's order still succeeds. Never `await inngest.send` directly
+ * in a request path — always go through this.
+ */
+export async function safeSend(payload: { name: string; data: Record<string, unknown> }) {
+    // Skip entirely when no real event key is configured (e.g. local dev)
+    const key = process.env.INNGEST_EVENT_KEY;
+    if (!key || key.includes("____")) {
+        return;
+    }
+    try {
+        await inngest.send(payload);
+    } catch (err) {
+        console.warn(`[inngest] failed to send "${payload.name}":`, err instanceof Error ? err.message : err);
+    }
+}
+
 // Low Stock Alert to Admin Email
 const checkLowStock = inngest.createFunction({ id: "check-low-stock", name: "Low Stock Alert", triggers: [{ event: "inventory/stock.updated" }] }, async ({ event, step }) => {
     const { productId } = event.data;
@@ -104,7 +125,7 @@ const sendMonthlyOffers = inngest.createFunction(
 
                     <table width="100%" cellpadding="0" cellspacing="0">
                         ${deals
-                            .reduce((rows: any, _, i: number) => {
+                            .reduce((rows: any, _: any, i: number) => {
                                 if (i % 3 === 0) {
                                     rows.push(deals.slice(i, i + 3));
                                 }
@@ -184,7 +205,7 @@ const autoAssignRider = inngest.createFunction(
                 select: { deliveryPartnerId: true },
             });
 
-            const busyRiderIds = busyOrders.map((o) => o.deliveryPartnerId);
+            const busyRiderIds = busyOrders.map((o: { deliveryPartnerId: string | null }) => o.deliveryPartnerId);
 
             const availableRider = await prisma.deliveryPartner.findFirst({
                 where: {

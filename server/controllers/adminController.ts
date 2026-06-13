@@ -32,19 +32,31 @@ export const getDeliveryPartners = async (req: Request, res: Response) => {
 // create delivery partner profile
 export const createDeliveryPartner = async (req: Request, res: Response) => {
     const { name, email, password, phone, vehicleType } = req.body;
+    const normalizedName = typeof name === "string" ? name.trim() : "";
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const normalizedPhone = typeof phone === "string" ? phone.trim() : "";
+    const normalizedVehicleType = typeof vehicleType === "string" && vehicleType.trim() ? vehicleType.trim() : "bike";
 
-    if (!name || !email || !password || !phone) {
+    if (!normalizedName || !normalizedEmail || !password || !normalizedPhone) {
         res.status(400).json({ message: "Please provide all required fields" });
+        return;
+    }
+
+    const existingPartner = await prisma.deliveryPartner.findUnique({ where: { email: normalizedEmail } });
+    if (existingPartner) {
+        res.status(400).json({ message: "A delivery partner already exists with this email" });
         return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const partner = await prisma.deliveryPartner.create({
-        data: { name, email: email.toLowerCase(), password: hashedPassword, phone, vehicleType },
+        data: { name: normalizedName, email: normalizedEmail, password: hashedPassword, phone: normalizedPhone, vehicleType: normalizedVehicleType },
     });
 
-    res.status(201).json({ partner });
+    const { password: _, ...partnerData } = partner;
+
+    res.status(201).json({ partner: partnerData });
 };
 
 // update delivery partner profile

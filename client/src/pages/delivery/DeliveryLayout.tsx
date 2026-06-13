@@ -27,13 +27,13 @@ export default function DeliveryLayout() {
     if (!partner) return null;
 
     return (
-        <div className="min-h-screen bg-app-cream">
+        <div className="min-h-screen">
             {/* Top Bar */}
-            <header className="bg-white border-b border-app-border sticky top-0 z-40">
+            <header className="glass border-b border-app-border/70 shadow-soft sticky top-0 z-40">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <TruckIcon className="size-6 text-app-green" />
-                        <span className="text-lg font-semibold text-app-green">Instacart Delivery</span>
+                        <span className="size-9 rounded-xl bg-gradient-to-br from-app-green-light to-app-green text-white flex-center shadow-glow-green"><TruckIcon className="size-5" /></span>
+                        <span className="text-lg font-bold text-gradient-green">Instacart Delivery</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <span className="text-sm font-medium text-zinc-600">{partner.name}</span>

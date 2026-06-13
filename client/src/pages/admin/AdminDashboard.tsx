@@ -28,10 +28,10 @@ export default function AdminDashboard() {
 
     const cards = stats
         ? [
-              { label: "Total Orders", value: stats.totalOrders, icon: ShoppingBagIcon },
-              { label: "Total Users", value: stats.totalUsers, icon: UsersIcon },
-              { label: "Total Products", value: stats.totalProducts, icon: PackageIcon },
-              { label: "Out of Stock", value: stats.outOfStock, icon: AlertTriangleIcon },
+              { label: "Total Orders", value: stats.totalOrders, icon: ShoppingBagIcon, tint: "from-emerald-400 to-emerald-600" },
+              { label: "Total Users", value: stats.totalUsers, icon: UsersIcon, tint: "from-sky-400 to-blue-600" },
+              { label: "Total Products", value: stats.totalProducts, icon: PackageIcon, tint: "from-app-orange to-app-orange-dark" },
+              { label: "Out of Stock", value: stats.outOfStock, icon: AlertTriangleIcon, tint: "from-rose-400 to-red-600" },
           ]
         : [];
 
@@ -40,14 +40,14 @@ export default function AdminDashboard() {
     return (
         <div className="space-y-6">
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 stagger">
                 {cards.map((card) => (
-                    <div key={card.label} className="bg-white rounded-2xl p-5 border border-app-border flex justify-between gap-3">
+                    <div key={card.label} className="bg-white rounded-2xl p-5 border border-app-border/60 shadow-soft card-lift flex justify-between gap-3">
                         <div>
-                            <p className="text-2xl font-semibold text-zinc-900">{card.value}</p>
+                            <p className="text-3xl font-bold text-app-green">{card.value}</p>
                             <p className="text-sm text-app-text-light">{card.label}</p>
                         </div>
-                        <div className={`size-10 rounded-xl flex-center bg-orange-50 text-orange-600`}>
+                        <div className={`size-11 rounded-xl flex-center bg-gradient-to-br ${card.tint} text-white shadow-soft`}>
                             <card.icon className="size-5" />
                         </div>
                     </div>
@@ -55,9 +55,9 @@ export default function AdminDashboard() {
             </div>
 
             {/* Recent Orders */}
-            <div className="bg-white rounded-2xl border border-app-border overflow-hidden">
+            <div className="bg-white rounded-2xl border border-app-border/60 shadow-soft overflow-hidden">
                 <div className="px-6 py-5 border-b border-app-border flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-zinc-900">Recent Orders</h2>
+                    <h2 className="text-lg font-bold text-app-green">Recent Orders</h2>
                     <Link to="/admin/orders" className="text-sm font-medium text-app-orange hover:text-app-orange-dark transition-colors">
                         View All →
                     </Link>

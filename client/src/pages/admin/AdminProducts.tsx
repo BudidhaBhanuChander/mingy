@@ -42,10 +42,10 @@ export default function AdminProducts() {
 
     return (
         <>
-            <div className="bg-white rounded-2xl shadow-sm border border-app-border overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-soft border border-app-border/60 overflow-hidden">
                 <div className="px-6 py-5 border-b border-app-border flex items-center justify-between gap-4 flex-wrap">
-                    <h2 className="text-xl font-semibold text-zinc-900">Products</h2>
-                    <Link to="/admin/products/new" className="flex items-center gap-2 px-4 py-2 bg-app-green text-white rounded-xl hover:bg-green-950 transition-colors font-medium text-sm">
+                    <h2 className="text-xl font-bold text-app-green">Products</h2>
+                    <Link to="/admin/products/new" className="btn-green !px-4 !py-2 text-sm !rounded-xl">
                         <PlusIcon className="size-4" /> Add Product
                     </Link>
                 </div>
@@ -71,7 +71,7 @@ export default function AdminProducts() {
                                     <tr key={product.id} className="hover:bg-zinc-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <img src={product.image} alt={product.name} className="size-12 rounded-lg object-cover" />
+                                                <img src={product.image} alt={product.name} className="size-12 rounded-lg object-cover bg-app-cream" />
                                                 <div>
                                                     <p className="font-semibold text-zinc-900">{product.name}</p>
                                                     <p className="text-xs text-zinc-500">{product.category || "Uncategorized"}</p>

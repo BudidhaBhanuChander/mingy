@@ -75,9 +75,9 @@ export default function AdminOrders() {
 
     return (
         <>
-            <div className="bg-white rounded-2xl shadow-sm border border-app-border overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-soft border border-app-border/60 overflow-hidden">
                 <div className="px-6 py-5 border-b border-app-border">
-                    <h2 className="text-xl font-semibold text-zinc-900">Orders</h2>
+                    <h2 className="text-xl font-bold text-app-green">Orders</h2>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm whitespace-nowrap">
@@ -161,8 +161,8 @@ export default function AdminOrders() {
                 <>
                     <div className="fixed inset-0 bg-app-cream/80 backdrop-blur z-50" onClick={() => setAssignModal(null)} />
                     <div className="fixed inset-0 z-50 flex-center p-4">
-                        <div className="bg-white rounded-2xl p-6 w-full max-w-sm animate-fade-in">
-                            <h3 className="text-lg font-semibold text-app-green mb-4">Assign Delivery Partner</h3>
+                        <div className="bg-white rounded-2xl p-6 w-full max-w-sm animate-scale-in shadow-lift border border-app-border/60">
+                            <h3 className="text-lg font-bold text-app-green mb-4">Assign Delivery Partner</h3>
                             {partners.length === 0 ? (
                                 <p className="text-sm text-zinc-500 mb-4">No active delivery partners. Please onboard a partner first.</p>
                             ) : (
@@ -187,7 +187,7 @@ export default function AdminOrders() {
                                 <button onClick={() => setAssignModal(null)} className="flex-1 py-2.5 text-sm font-medium text-zinc-600 bg-zinc-100 rounded-xl hover:bg-zinc-200 transition-colors">
                                     Cancel
                                 </button>
-                                <button onClick={handleAssign} disabled={!selectedPartner} className="flex-1 py-2.5 text-sm font-medium text-white bg-app-green rounded-xl hover:bg-app-green-light transition-colors disabled:opacity-50">
+                                <button onClick={handleAssign} disabled={!selectedPartner} className="btn-green flex-1 !py-2.5 text-sm !rounded-xl disabled:opacity-50 disabled:hover:translate-y-0">
                                     Assign
                                 </button>
                             </div>

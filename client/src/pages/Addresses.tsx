@@ -38,12 +38,12 @@ const Addresses = () => {
                             lng: position.coords.longitude,
                         });
                     },
-                    (error: any) => {
+                    (error: GeolocationPositionError) => {
                         if (retries > 0) {
                             retries--;
                             setTimeout(attempt, 1000);
                         } else {
-                            reject(new Error(error.message || "Failed to get location after retries"));
+                            reject(new Error(error?.message || "Failed to get location after retries"));
                         }
                     },
                     {
@@ -75,8 +75,9 @@ const Addresses = () => {
                 toast.success("Address added!");
             }
             resetForm();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || error.message || "Failed");
+        } catch (err: unknown) {
+            const msg = getErrorMessage(err) || "Failed";
+            toast.error(msg);
         }
     };
 
@@ -86,13 +87,28 @@ const Addresses = () => {
         setShowForm(true);
     };
 
+    // helper to extract message from unknown errors
+    const getErrorMessage = (err: unknown): string | undefined => {
+        if (!err) return undefined;
+        if (typeof err === "string") return err;
+        if (err instanceof Error) return err.message;
+        // axios style
+        try {
+            const axiosLike = err as { response?: { data?: { message?: string } }; message?: string };
+            return axiosLike.response?.data?.message || axiosLike.message;
+        } catch {
+            return undefined;
+        }
+    };
+
     useEffect(() => {
         api.get("/addresses")
             .then(({ data }) => {
                 setAddresses(data.addresses);
             })
-            .catch((error: any) => {
-                toast.error(error.response?.data?.message || error?.message);
+            .catch((err: unknown) => {
+                const msg = getErrorMessage(err) || "Failed to fetch addresses";
+                toast.error(msg);
             })
             .finally(() => {
                 setLoading(false);
@@ -100,17 +116,17 @@ const Addresses = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-app-cream">
+        <div className="min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* page header  */}
                 <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-2xl font-semibold text-app-green">My Addresses</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-app-green">My Addresses</h1>
                     <button
                         onClick={() => {
                             resetForm();
                             setShowForm(true);
                         }}
-                        className="px-4 py-2 bg-app-green text-white text-sm font-semibold rounded-xl hover:bg-app-green-light transition-colors flex items-center gap-2"
+                        className="btn-green !px-4 !py-2 text-sm !rounded-xl"
                     >
                         <PlusIcon className="size-4" /> Add Address
                     </button>
@@ -123,9 +139,11 @@ const Addresses = () => {
                 {loading ? (
                     <Loading />
                 ) : addresses.length === 0 ? (
-                    <div className="text-center py-16">
-                        <MapPinIcon className="size-16 text-app-border mx-auto mb-4" />
-                        <h2 className="text-lg font-semibold text-app-green mb-2">No addresses saved</h2>
+                    <div className="text-center py-16 animate-scale-in">
+                        <div className="size-20 rounded-full bg-white flex-center shadow-soft mx-auto mb-4">
+                            <MapPinIcon className="size-9 text-app-border" />
+                        </div>
+                        <h2 className="text-lg font-bold text-app-green mb-2">No addresses saved</h2>
                         <p className="text-sm text-app-text-light">Add an address for faster checkout</p>
                     </div>
                 ) : (

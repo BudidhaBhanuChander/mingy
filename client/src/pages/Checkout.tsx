@@ -94,11 +94,11 @@ const Checkout = () => {
 
     if (items.length === 0) {
         return (
-            <div className="min-h-screen bg-app-cream flex-center">
-                <div className="text-center">
-                    <h2 className="text-xl font-semibold text-app-green mb-2">Your cart is empty</h2>
+            <div className="min-h-screen flex-center">
+                <div className="text-center animate-scale-in">
+                    <h2 className="text-xl font-bold text-app-green mb-2">Your cart is empty</h2>
                     <p className="text-sm text-app-text-light mb-4">Add some products to checkout</p>
-                    <button onClick={() => navigate("/products")} className="px-5 py-2.5 bg-app-green text-white text-sm font-medium rounded-xl hover:bg-app-green-light transition-colors">
+                    <button onClick={() => navigate("/products")} className="btn-green !px-5 !py-2.5 text-sm !rounded-xl">
                         Browse Products
                     </button>
                 </div>
@@ -107,20 +107,20 @@ const Checkout = () => {
     }
 
     return (
-        <div className="min-h-screen bg-app-cream">
+        <div className="min-h-screen">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Back Button */}
                 <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-app-text-light hover:text-app-green mb-6 transition-colors">
                     <ArrowLeft className="size-4" /> Back
                 </button>
 
-                <h1 className="text-2xl font-semibold text-app-green mb-8">Checkout</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-app-green mb-8">Checkout</h1>
 
                 {/* Steps */}
                 <div className="flex items-center gap-2 mb-8">
                     {steps.map((s, i) => (
                         <div key={s.key} className="flex items-center gap-2">
-                            <button onClick={() => setStep(s.key)} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${step === s.key ? "bg-app-green text-white" : "bg-white text-app-text-light"}`}>
+                            <button onClick={() => setStep(s.key)} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${step === s.key ? "bg-gradient-to-r from-app-green-light to-app-green text-white shadow-glow-green" : "bg-white text-app-text-light shadow-soft hover:text-app-green"}`}>
                                 <s.icon className="size-4" /> {s.label}
                                 {i < steps.length - 1 && <ChevronRightIcon className="size-4 text-app-text-light" />}
                             </button>
@@ -139,7 +139,7 @@ const Checkout = () => {
                     </div>
 
                     {/* Order Summary Sidebar */}
-                    <div className="bg-white rounded-2xl p-5 h-fit sticky top-24">
+                    <div className="bg-white rounded-2xl p-5 h-fit sticky top-24 shadow-soft border border-app-border/60">
                         <h3 className="text-sm font-semibold text-app-green mb-4">Order Summary</h3>
 
                         <div className="space-y-2 text-sm">

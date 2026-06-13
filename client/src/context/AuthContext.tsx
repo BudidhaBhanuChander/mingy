@@ -35,31 +35,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (email: string, password: string) => {
-        try {
-            const { data } = await api.post("/auth/login", { email, password });
-            setUser(data.user);
-            setToken(data.token);
-            localStorage.setItem("auth_token", data.token);
-            localStorage.setItem("auth_user", JSON.stringify(data.user));
-            toast.success("Login successful");
-            navigate("/");
-        } catch (error: any) {
-            toast.error(error?.response?.data?.message || error?.message);
-        }
+        const { data } = await api.post("/auth/login", { email, password });
+        setUser(data.user);
+        setToken(data.token);
+        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("auth_user", JSON.stringify(data.user));
+        toast.success("Login successful");
+        navigate("/");
     };
 
     const register = async (name: string, email: string, password: string) => {
-        try {
-            const { data } = await api.post("/auth/register", { name, email, password });
-            setUser(data.user);
-            setToken(data.token);
-            localStorage.setItem("auth_token", data.token);
-            localStorage.setItem("auth_user", JSON.stringify(data.user));
-            toast.success("Registration successful");
-            navigate("/");
-        } catch (error: any) {
-            toast.error(error?.response?.data?.message || error?.message);
-        }
+        const { data } = await api.post("/auth/register", { name, email, password });
+        setUser(data.user);
+        setToken(data.token);
+        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("auth_user", JSON.stringify(data.user));
+        toast.success("Registration successful");
+        navigate("/");
     };
 
     const logout = () => {

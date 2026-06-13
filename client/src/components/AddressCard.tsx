@@ -27,17 +27,17 @@ const AddressCard = ({ addr, onEditHandler, setAddresses }: AddressCardProps) =>
     };
 
     return (
-        <div key={addr.id} className="max-w-3xl bg-white rounded-2xl p-6 flex items-start justify-between">
+        <div key={addr.id} className="max-w-3xl bg-white rounded-2xl p-6 flex items-start justify-between shadow-soft border border-app-border/60 card-lift animate-fade-in">
             {/* left  */}
             <div className="flex gap-4">
-                <div className="size-10 rounded-xl bg-app-cream flex-center shrink-0">
+                <div className="size-10 rounded-xl bg-gradient-to-br from-app-cream to-orange-100 ring-1 ring-app-orange/10 flex-center shrink-0">
                     <MapPinIcon className="size-5 text-app-green" />
                 </div>
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <p className="text-sm font-semibold text-app-green">{addr.label}</p>
                         {addr.isDefault && (
-                            <span className="flex-center gap-1 px-2.5 py-0.5 text-[10px] font-medium bg-app-green text-white rounded-full">
+                            <span className="flex-center gap-1 px-2.5 py-0.5 text-[10px] font-medium bg-gradient-to-r from-app-green-light to-app-green text-white rounded-full">
                                 <CheckIcon className="size-2.5" /> Default
                             </span>
                         )}

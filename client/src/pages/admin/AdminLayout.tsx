@@ -28,15 +28,15 @@ export default function AdminLayout() {
             </div>
             <div className="flex flex-col h-full lg:flex-row gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
                 {/* Admin Sidebar */}
-                <aside className="w-full lg:w-64 shrink-0 h-fit bg-white rounded-2xl p-4 border border-app-border">
+                <aside className="w-full lg:w-64 shrink-0 h-fit bg-white rounded-2xl p-4 border border-app-border/60 shadow-soft">
                     <div className="pb-4 mb-4 border-b border-app-border">
-                        <h2 className="text-lg font-semibold text-app-green flex items-center gap-2 px-2">
-                            <ShieldIcon className="size-5 text-green-900" /> Admin Panel
+                        <h2 className="text-lg font-bold text-app-green flex items-center gap-2 px-2">
+                            <span className="size-8 rounded-lg bg-gradient-to-br from-app-green-light to-app-green text-white flex-center shadow-glow-green"><ShieldIcon className="size-4.5" /></span> Admin Panel
                         </h2>
                     </div>
                     <nav className="flex flex-col gap-1.5">
                         {AdminLinkData.map((link) => (
-                            <NavLink key={link.to} to={link.to} end={true} className={({ isActive }) => `flex items-center gap-3 p-2.5 rounded-md text-sm transition-colors ${isActive ? "bg-app-green text-white" : "text-app-text-light hover:bg-orange-50 hover:text-zinc-900"}`}>
+                            <NavLink key={link.to} to={link.to} end={true} className={({ isActive }) => `flex items-center gap-3 p-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? "bg-gradient-to-r from-app-green-light to-app-green text-white shadow-glow-green" : "text-app-text-light hover:bg-orange-50 hover:text-app-green hover:translate-x-1"}`}>
                                 <link.icon className="size-4" /> {link.label}
                             </NavLink>
                         ))}

@@ -1,0 +1,1 @@
+{"message":"\nInvalid `prisma.deliveryPartner.create()` invocation:\n\n\nUnique constraint failed on the fields: (`email`)"}

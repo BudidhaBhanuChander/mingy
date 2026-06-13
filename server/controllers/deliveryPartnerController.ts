@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma.js";
+import { restoreStock } from "../utils/stock.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -11,14 +12,15 @@ const generateToken = (id: string) => {
 // POST /api/delivery/login
 export const loginPartner = async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const normalizedEmail = String(email).trim().toLowerCase();
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
         return res.status(400).json({ message: "Please provide email and password" });
     }
 
     const partner = await prisma.deliveryPartner.findUnique({
         where: {
-            email: email.toLowerCase(),
+            email: normalizedEmail,
         },
     });
 
@@ -114,18 +116,29 @@ export const cancelDelivery = async (req: Request, res: Response) => {
         where: { id: req.params.id as string, deliveryPartnerId: req.partner!.id },
     });
 
-    if (order!.status === "Delivered") {
+    if (!order) {
+        return res.status(404).json({ message: "Delivery not found" });
+    }
+
+    if (order.status === "Delivered") {
         return res.status(400).json({ message: "Cannot cancel a delivered order" });
     }
 
-    const history = order!.statusHistory as any[];
+    if (order.status === "Cancelled") {
+        return res.status(400).json({ message: "Order is already cancelled" });
+    }
 
+    const history = order.statusHistory as any[];
     history.push({ status: "Cancelled", note: reason || "", timestamp: new Date() });
 
     const updatedOrder = await prisma.order.update({
-        where: { id: order!.id },
+        where: { id: order.id },
         data: { status: "Cancelled", statusHistory: history },
     });
+
+    // Return the reserved stock to the catalogue
+    const items = Array.isArray(order.items) ? (order.items as any[]) : [];
+    await restoreStock(items);
 
     res.json({ order: updatedOrder, message: "Delivery cancelled" });
 };

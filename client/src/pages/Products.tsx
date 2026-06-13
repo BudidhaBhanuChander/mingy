@@ -68,7 +68,7 @@ const Products = () => {
     }, [category, organic, sort, page, minPrice, maxPrice]);
 
     return (
-        <div className="min-h-screen bg-app-cream">
+        <div className="min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {/* Breadcrumb */}
                 <nav className="flex items-center gap-2 text-sm text-app-text-light mb-6">
@@ -82,7 +82,7 @@ const Products = () => {
                 <div className="flex gap-8 xl:gap-10">
                     {/* Sidebar - Desktop */}
                     <aside className="hidden lg:block w-64 shrink-0">
-                        <div className="bg-white rounded-2xl p-4 sticky top-24">
+                        <div className="bg-white rounded-2xl p-5 sticky top-24 shadow-soft border border-app-border/60">
                             <FilterPanel categories={categoriesData} category={category} organic={organic} minPrice={minPrice} maxPrice={maxPrice} updateFilter={updateFilter} clearFilters={clearFilters} hasFilters={hasFilters} />
                         </div>
                     </aside>
@@ -92,19 +92,19 @@ const Products = () => {
                         {/* Header */}
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h1 className="text-2xl font-semibold text-app-green">{activeCategory ? activeCategory.name : "All Products"}</h1>
+                                <h1 className="text-2xl sm:text-3xl font-bold text-app-green">{activeCategory ? activeCategory.name : "All Products"}</h1>
                                 <p className="text-sm text-app-text-light mt-0.5">{products.length} products found</p>
                             </div>
 
                             <div className="flex flex-col lg:items-center gap-3">
                                 {/* Mobile filter toggle */}
-                                <button onClick={() => setMobileFiltersOpen(true)} className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm bg-white rounded-xl border border-app-border hover:bg-app-cream transition-colors">
+                                <button onClick={() => setMobileFiltersOpen(true)} className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm bg-white rounded-xl border border-app-border shadow-soft hover:border-app-green hover:bg-app-cream transition-all">
                                     <SlidersHorizontal className="size-4" /> Filters
                                 </button>
 
                                 {/* Sort */}
                                 <div className="relative">
-                                    <select value={sort} onChange={(e) => updateFilter("sort", e.target.value)} className="appearance-none pl-3 pr-8 py-2 text-sm bg-white rounded-xl border border-app-border focus:border-app-green outline-none cursor-pointer">
+                                    <select value={sort} onChange={(e) => updateFilter("sort", e.target.value)} className="appearance-none pl-3 pr-8 py-2 text-sm bg-white rounded-xl border border-app-border shadow-soft focus:border-app-green focus:ring-2 focus:ring-app-green/20 outline-none cursor-pointer">
                                         <option value="">Newest</option>
                                         <option value="price_asc">Price: Low → High</option>
                                         <option value="price_desc">Price: High → Low</option>
@@ -123,7 +123,7 @@ const Products = () => {
                             <div className="text-center py-16">
                                 <p className="text-lg font-semibold text-app-green mb-2">No products found</p>
                                 <p className="text-sm text-app-text-light mb-4">Try adjusting your filters or search terms</p>
-                                <button onClick={clearFilters} className="px-5 py-2 text-sm font-medium bg-app-green text-white rounded-xl hover:bg-app-green-light transition-colors">
+                                <button onClick={clearFilters} className="btn-green !px-5 !py-2 text-sm !rounded-xl">
                                     Clear Filters
                                 </button>
                             </div>
@@ -141,7 +141,7 @@ const Products = () => {
                                             updateFilter("page", String(i + 1));
                                             scrollTo(0, 0);
                                         }}
-                                        className={`size-9 rounded-lg text-sm font-medium transition-colors ${page === i + 1 ? "bg-app-green text-white" : "bg-white text-app-text-light hover:bg-app-cream"}`}
+                                        className={`size-9 rounded-xl text-sm font-semibold transition-all ${page === i + 1 ? "bg-gradient-to-br from-app-green-light to-app-green text-white shadow-glow-green scale-105" : "bg-white text-app-text-light shadow-soft hover:text-app-green hover:-translate-y-0.5"}`}
                                     >
                                         {i + 1}
                                     </button>

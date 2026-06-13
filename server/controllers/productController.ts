@@ -22,7 +22,7 @@ export const getProducts = async (req: Request, res: Response) => {
 
     const where: any = {};
     if (category && category !== "all") where.category = category as string;
-    if (search) where.name = { contains: search as string, mode: "insensitive" };
+    if (search) where.name = { contains: search as string };
     if (minPrice || maxPrice) {
         where.price = {};
         if (minPrice) where.price.gte = Number(minPrice);

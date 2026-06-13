@@ -4,22 +4,25 @@ import { footerData } from "../assets/assets";
 
 const Footer = () => {
     return (
-        <footer className="bg-app-green text-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <footer className="relative bg-gradient-to-b from-app-green-light to-app-green text-white overflow-hidden">
+            <div className="absolute -top-24 left-1/4 size-72 rounded-full bg-app-orange/10 blur-3xl" />
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* - top -  */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Brand */}
                     <div>
-                        <Link to="/" className="flex items-center gap-2 mb-4">
-                            <BikeIcon className="size-6 text-white" />
-                            <span className="text-xl font-semibold">{footerData.brand.name}</span>
+                        <Link to="/" className="flex items-center gap-2 mb-4 group w-fit">
+                            <span className="size-9 rounded-xl bg-white/15 flex-center group-hover:rotate-6 transition-transform">
+                                <BikeIcon className="size-5 text-white" />
+                            </span>
+                            <span className="text-xl font-bold">{footerData.brand.name}</span>
                         </Link>
 
                         <p className="text-sm text-white/70 mb-4">{footerData.brand.description}</p>
 
                         <div className="flex gap-3">
                             {footerData.brand.socials.map((social, i) => (
-                                <a key={i} href={social.link} className="size-9 rounded-lg bg-white/10 flex-center hover:bg-white/2">
+                                <a key={i} href={social.link} className="size-9 rounded-xl bg-white/10 flex-center hover:bg-app-orange hover:-translate-y-1 transition-all">
                                     <social.icon className="size-4" />
                                 </a>
                             ))}

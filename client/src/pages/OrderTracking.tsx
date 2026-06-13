@@ -7,14 +7,25 @@ import OrderOTP from "../components/OrderTracking/OrderOTP";
 import LiveMap from "../components/OrderTracking/LiveMap";
 import OrderTimeLine from "../components/OrderTracking/OrderTimeLine";
 import api from "../config/api";
+import { useSearchParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const OrderTracking = () => {
     const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { clearCart } = useCart();
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
     const [liveLocation, setLiveLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+    useEffect(() => {
+        if (!searchParams.get("clearCart")) return;
+
+        clearCart();
+        setSearchParams({}, { replace: true });
+    }, [searchParams, clearCart, setSearchParams]);
 
     useEffect(() => {
         api.get(`/orders/${id}`)
@@ -51,7 +62,7 @@ const OrderTracking = () => {
     if (!order) null;
 
     return (
-        <div className="min-h-screen mb-20 bg-app-cream">
+        <div className="min-h-screen mb-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <button onClick={() => navigate("/orders")} className="flex items-center gap-2 text-sm text-app-text-light hover:text-app-green mb-6 transition-colors">
@@ -60,7 +71,7 @@ const OrderTracking = () => {
                 {/* order id, date, status  */}
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-2xl font-semibold text-app-green">Order #{order!.id.slice(-8).toUpperCase()}</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-app-green">Order #{order!.id.slice(-8).toUpperCase()}</h1>
                         <p className="text-sm text-app-text-light mt-1">Placed on {new Date(order!.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
                     </div>
                     <span className={`px-4 py-1.5 text-sm font-semibold rounded-full ${order!.status === "Delivered" ? "bg-green-100 text-green-700" : order!.status === "Cancelled" ? "bg-red-100 text-red-700" : "bg-app-orange/10 text-app-orange"}`}>{order!.status}</span>
@@ -78,9 +89,9 @@ const OrderTracking = () => {
 
                         {/* Delivery Person */}
                         {order?.deliveryPartner && order.status !== "Delivered" && order.status !== "Cancelled" && (
-                            <div className="bg-white rounded-2xl p-5 flex items-center justify-between">
+                            <div className="bg-white rounded-2xl p-5 flex items-center justify-between shadow-soft border border-app-border/60">
                                 <div className="flex items-center gap-3">
-                                    <div className="size-11 rounded-full bg-app-green flex-center">
+                                    <div className="size-11 rounded-full bg-gradient-to-br from-app-green-light to-app-green flex-center shadow-glow-green">
                                         <span className="text-white font-semibold text-sm">{order.deliveryPartner.name.charAt(0)}</span>
                                     </div>
                                     <div>
@@ -98,7 +109,7 @@ const OrderTracking = () => {
                     {/* Right side - Order Details */}
                     <div className="space-y-5">
                         {/* Delivery Address */}
-                        <div className="bg-white rounded-2xl p-5">
+                        <div className="bg-white rounded-2xl p-5 shadow-soft border border-app-border/60">
                             <h3 className="text-sm font-semibold text-app-green mb-3 flex items-center gap-2">
                                 <MapPinIcon className="size-4" />
                                 Delivery Address
@@ -113,13 +124,13 @@ const OrderTracking = () => {
                         </div>
 
                         {/* Items */}
-                        <div className="bg-white rounded-2xl p-5">
+                        <div className="bg-white rounded-2xl p-5 shadow-soft border border-app-border/60">
                             <h3 className="text-sm font-semibold text-app-green mb-3">Items ({order?.items.length})</h3>
 
                             <div className="space-y-3">
                                 {order?.items.map((item, i) => (
                                     <div key={i} className="flex items-center gap-3">
-                                        <img src={item.image} alt={item.name} className="size-10 rounded-lg object-cover" />
+                                        <img src={item.image} alt={item.name} className="size-10 rounded-lg object-cover bg-app-cream" />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-medium text-app-green truncate">{item.name}</p>
                                             <p className="text-xs text-app-text-light">x{item.quantity}</p>
