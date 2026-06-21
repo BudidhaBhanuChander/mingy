@@ -66,8 +66,8 @@ const ProductCard = ({ product }: Props) => {
                 )}
 
                 {/* Price + Add */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-baseline gap-1 truncate">
+                <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-baseline gap-1 min-w-0 truncate">
                         <span className="text-lg font-bold text-app-green">
                             {currency}
                             {product.price.toFixed(1)}
@@ -94,7 +94,7 @@ const ProductCard = ({ product }: Props) => {
                             <Plus className="size-4" strokeWidth={2.5} />
                         </button>
                     ) : (
-                        /* In-cart state — Blinkit/Zepto style − qty + stepper */
+                        /* In-cart state — Blinkit/Zepto style − qty + stepper (compact) */
                         <div
                             onClick={(e) => e.stopPropagation()}
                             className="flex items-center h-9 rounded-full bg-linear-to-br from-app-orange to-app-orange-dark text-white shrink-0 shadow-glow overflow-hidden animate-scale-in"
@@ -104,12 +104,12 @@ const ProductCard = ({ product }: Props) => {
                                     e.stopPropagation();
                                     updateQuantity(product.id, cartQty - 1);
                                 }}
-                                className="size-9 flex-center hover:bg-black/15 active:scale-90 transition-all"
+                                className="w-7 h-9 flex-center hover:bg-black/15 active:scale-90 transition-all"
                                 aria-label={cartQty === 1 ? "Remove from cart" : "Decrease quantity"}
                             >
-                                <Minus className="size-4" strokeWidth={2.5} />
+                                <Minus className="size-3.5" strokeWidth={3} />
                             </button>
-                            <span className="min-w-5 text-center text-sm font-bold tabular-nums select-none">
+                            <span className="min-w-4 text-center text-sm font-bold tabular-nums select-none">
                                 {cartQty}
                             </span>
                             <button
@@ -117,10 +117,10 @@ const ProductCard = ({ product }: Props) => {
                                     e.stopPropagation();
                                     updateQuantity(product.id, cartQty + 1);
                                 }}
-                                className="size-9 flex-center hover:bg-black/15 active:scale-90 transition-all"
+                                className="w-7 h-9 flex-center hover:bg-black/15 active:scale-90 transition-all"
                                 aria-label="Increase quantity"
                             >
-                                <Plus className="size-4" strokeWidth={2.5} />
+                                <Plus className="size-3.5" strokeWidth={3} />
                             </button>
                         </div>
                     )}
