@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { Product } from "../types";
-import { Heart, Plus, Star } from "lucide-react";
+import { Heart, Minus, Plus, Star } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 
@@ -11,10 +11,10 @@ interface Props {
 const ProductCard = ({ product }: Props) => {
     const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
 
-    const { addToCart, items } = useCart();
+    const { addToCart, updateQuantity, items } = useCart();
     const { isFavorite, toggleFavorite } = useFavorites();
     const navigate = useNavigate();
-    const cartItem = items.find((i) => i.product.id === product.id);
+    const cartItem = items.find((i) => i.product?.id === product.id);
     const cartQty = cartItem?.quantity ?? 0;
     const fav = isFavorite(product.id);
 
@@ -81,21 +81,49 @@ const ProductCard = ({ product }: Props) => {
                         )}
                     </div>
 
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            addToCart(product);
-                        }}
-                        className="relative size-9 rounded-full bg-linear-to-br from-app-orange to-app-orange-dark text-white flex-center shrink-0 shadow-glow hover:scale-110 hover:rotate-90 active:scale-95 transition-all duration-300"
-                        aria-label="Add to cart"
-                    >
-                        <Plus className="size-4" strokeWidth={2.5} />
-                        {cartQty > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 size-4 rounded-full bg-app-green text-white text-[10px] font-bold flex-center leading-none">
+                    {cartQty === 0 ? (
+                        /* Empty state — single Add button */
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                addToCart(product);
+                            }}
+                            className="size-9 rounded-full bg-linear-to-br from-app-orange to-app-orange-dark text-white flex-center shrink-0 shadow-glow hover:scale-110 hover:rotate-90 active:scale-95 transition-all duration-300"
+                            aria-label="Add to cart"
+                        >
+                            <Plus className="size-4" strokeWidth={2.5} />
+                        </button>
+                    ) : (
+                        /* In-cart state — Blinkit/Zepto style − qty + stepper */
+                        <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center h-9 rounded-full bg-linear-to-br from-app-orange to-app-orange-dark text-white shrink-0 shadow-glow overflow-hidden animate-scale-in"
+                        >
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    updateQuantity(product.id, cartQty - 1);
+                                }}
+                                className="size-9 flex-center hover:bg-black/15 active:scale-90 transition-all"
+                                aria-label={cartQty === 1 ? "Remove from cart" : "Decrease quantity"}
+                            >
+                                <Minus className="size-4" strokeWidth={2.5} />
+                            </button>
+                            <span className="min-w-5 text-center text-sm font-bold tabular-nums select-none">
                                 {cartQty}
                             </span>
-                        )}
-                    </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    updateQuantity(product.id, cartQty + 1);
+                                }}
+                                className="size-9 flex-center hover:bg-black/15 active:scale-90 transition-all"
+                                aria-label="Increase quantity"
+                            >
+                                <Plus className="size-4" strokeWidth={2.5} />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

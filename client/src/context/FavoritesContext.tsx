@@ -26,12 +26,20 @@ export const FavoritesProvider = ({ children }: { children: React.ReactNode }) =
         if (!user) { setFavorites([]); return; }
         setLoading(true);
         api.get("/favorites")
-            .then(({ data }) => setFavorites(data.favorites.map((f: any) => f.product)))
+            .then(({ data }) => {
+                // Backend returns each product spread directly (with a favoriteId),
+                // not nested under `f.product`. Support both shapes and drop nulls
+                // so `favorites` never contains undefined entries (which crash isFavorite).
+                const list = (data.favorites ?? [])
+                    .map((f: any) => (f && f.product ? f.product : f))
+                    .filter((p: any) => p && p.id);
+                setFavorites(list);
+            })
             .catch(() => {})
             .finally(() => setLoading(false));
     }, [user]);
 
-    const isFavorite = (productId: string) => favorites.some((p) => p.id === productId);
+    const isFavorite = (productId: string) => favorites.some((p) => p?.id === productId);
 
     const toggleFavorite = (product: Product) => {
         if (!user) return;
