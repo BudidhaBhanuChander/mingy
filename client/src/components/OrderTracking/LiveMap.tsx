@@ -2,10 +2,52 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { MapPinIcon } from "lucide-react";
 import { iconsForLeafpad } from "../../assets/assets";
 import L from "leaflet";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 
+/**
+ * Smoothly animates a value from its previous position to the next target over
+ * ~1s using requestAnimationFrame, so the driver marker "glides" between
+ * real-time location updates instead of teleporting (Swiggy/Zepto feel).
+ */
+function useSmoothPosition(target: { lat: number; lng: number } | null) {
+    const [pos, setPos] = useState(target);
+    const fromRef = useRef(target);
+    const rafRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        if (!target) return;
+        const from = fromRef.current ?? target;
+        const start = performance.now();
+        const DURATION = 1000;
+
+        const tick = (now: number) => {
+            const t = Math.min(1, (now - start) / DURATION);
+            // ease-out
+            const e = 1 - Math.pow(1 - t, 3);
+            setPos({
+                lat: from.lat + (target.lat - from.lat) * e,
+                lng: from.lng + (target.lng - from.lng) * e,
+            });
+            if (t < 1) rafRef.current = requestAnimationFrame(tick);
+            else fromRef.current = target;
+        };
+
+        rafRef.current = requestAnimationFrame(tick);
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, [target?.lat, target?.lng]);
+
+    return pos ?? target;
+}
+
 export default function LiveMap({ order, liveLocation }: { order: any; liveLocation: any }) {
+    // Glide the truck marker between real-time updates.
+    const smooth = useSmoothPosition(
+        liveLocation && liveLocation.lat ? { lat: liveLocation.lat, lng: liveLocation.lng } : null
+    );
+
     // Custom delivery truck icon
     const truckIcon = new L.Icon({
         iconUrl: iconsForLeafpad.truck,
@@ -38,7 +80,7 @@ export default function LiveMap({ order, liveLocation }: { order: any; liveLocat
                     {liveLocation && liveLocation.lat !== 0 ? (
                         <MapContainer center={[liveLocation.lat, liveLocation.lng]} zoom={15} style={{ height: "100%", width: "100%" }} zoomControl={false}>
                             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                            <Marker position={[liveLocation.lat, liveLocation.lng]} icon={truckIcon}>
+                            <Marker position={[smooth!.lat, smooth!.lng]} icon={truckIcon}>
                                 <Popup>Delivery Partner</Popup>
                             </Marker>
                             {order.shippingAddress.lat && order.shippingAddress.lng && (
@@ -46,7 +88,7 @@ export default function LiveMap({ order, liveLocation }: { order: any; liveLocat
                                     <Popup>Delivery Address</Popup>
                                 </Marker>
                             )}
-                            <MapUpdater center={[liveLocation.lat, liveLocation.lng]} />
+                            <MapUpdater center={[smooth!.lat, smooth!.lng]} />
                         </MapContainer>
                     ) : order.shippingAddress.lat && order.shippingAddress.lng ? (
                         <MapContainer center={[order.shippingAddress.lat, order.shippingAddress.lng]} zoom={15} style={{ height: "100%", width: "100%" }} zoomControl={false}>

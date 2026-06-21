@@ -7,6 +7,7 @@ import OrderOTP from "../components/OrderTracking/OrderOTP";
 import LiveMap from "../components/OrderTracking/LiveMap";
 import OrderTimeLine from "../components/OrderTracking/OrderTimeLine";
 import api from "../config/api";
+import { getSocket } from "../config/socket";
 import { useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
@@ -34,7 +35,38 @@ const OrderTracking = () => {
             .finally(() => setLoading(false));
     }, [id, navigate]);
 
-    // live location every 10 seconds
+    // ── Real-time updates via Socket.IO (primary path) ──
+    // Driver location + status changes are pushed instantly. The polling effect
+    // below stays as a slower fallback in case the socket can't connect.
+    useEffect(() => {
+        if (!id) return;
+        if (order && ["Delivered", "Cancelled"].includes(order.status)) return;
+
+        const socket = getSocket();
+        socket.emit("order:subscribe", id);
+
+        const onLocation = (data: { orderId: string; lat: number; lng: number }) => {
+            if (data.orderId !== id) return;
+            if (typeof data.lat === "number" && typeof data.lng === "number") {
+                setLiveLocation({ lat: data.lat, lng: data.lng });
+            }
+        };
+        const onStatus = (data: { orderId: string; status: string }) => {
+            if (data.orderId !== id) return;
+            setOrder((prev) => (prev ? { ...prev, status: data.status } : prev));
+        };
+
+        socket.on("location:update", onLocation);
+        socket.on("status:update", onStatus);
+
+        return () => {
+            socket.emit("order:unsubscribe", id);
+            socket.off("location:update", onLocation);
+            socket.off("status:update", onStatus);
+        };
+    }, [id, order?.status]);
+
+    // Fallback polling (every 30s) — covers the case where WebSockets are blocked.
     useEffect(() => {
         if (!order || ["Delivered", "Cancelled", "Placed"].includes(order.status)) return;
 
@@ -47,14 +79,12 @@ const OrderTracking = () => {
                         lng: data.liveLocation.lng,
                     });
                 }
-                // Also update order status if it changed
                 if (data.status && data.status !== order.status) {
                     setOrder((prev) => (prev ? { ...prev, status: data.status } : prev));
                 }
             } catch {}
         };
-        fetchLocation();
-        const interval = setInterval(fetchLocation, 10000);
+        const interval = setInterval(fetchLocation, 30000);
         return () => clearInterval(interval);
     }, [id, order?.status]);
 
