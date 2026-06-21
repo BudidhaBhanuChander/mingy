@@ -24,15 +24,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const savedToken = localStorage.getItem("auth_token");
-        const savedUser = localStorage.getItem("auth_user");
+        try {
+            const savedToken = localStorage.getItem("auth_token");
+            const savedUser = localStorage.getItem("auth_user");
 
-        if (savedToken && savedUser) {
-            setToken(savedToken);
-            setUser(JSON.parse(savedUser));
+            if (savedToken && savedUser) {
+                const parsed = JSON.parse(savedUser);
+                // Guard against corrupt/partial data crashing the whole app on mount.
+                if (parsed && typeof parsed === "object" && parsed.name) {
+                    setToken(savedToken);
+                    setUser(parsed);
+                } else {
+                    localStorage.removeItem("auth_token");
+                    localStorage.removeItem("auth_user");
+                }
+            }
+        } catch {
+            // Corrupt JSON in localStorage — clear it so the app can boot.
+            localStorage.removeItem("auth_token");
+            localStorage.removeItem("auth_user");
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     }, []);
 
     const login = async (email: string, password: string) => {
