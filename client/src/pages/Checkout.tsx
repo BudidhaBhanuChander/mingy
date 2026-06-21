@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import type { Address } from "../types";
-import { ArrowLeft, CheckIcon, ChevronRightIcon, CreditCardIcon, MapPinIcon } from "lucide-react";
+import { ArrowLeft, CheckIcon, ChevronRightIcon, CreditCardIcon, MapPinIcon, TagIcon, XIcon } from "lucide-react";
 import CheckoutAddress from "../components/Checkout/CheckoutAddress";
 import CheckoutPayment from "../components/Checkout/CheckoutPayment";
 import CheckoutReview from "../components/Checkout/CheckoutReview";
@@ -34,15 +34,39 @@ const Checkout = () => {
 
     const [paymentMethod, setPaymentMethod] = useState("card");
 
+    const [couponCode, setCouponCode] = useState("");
+    const [couponLoading, setCouponLoading] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
+
     const deliveryFee = cartTotal > 20 ? 0 : 1.99;
     const tax = cartTotal * 0.08;
-    const total = cartTotal + deliveryFee + tax;
+    const discount = appliedCoupon?.discount ?? 0;
+    const total = cartTotal + deliveryFee + tax - discount;
 
     const steps: { key: string; label: string; icon: typeof MapPinIcon }[] = [
         { key: "address", label: "Address", icon: MapPinIcon },
         { key: "payment", label: "Payment", icon: CreditCardIcon },
         { key: "review", label: "Review", icon: CheckIcon },
     ];
+
+    const handleApplyCoupon = async () => {
+        if (!couponCode.trim()) return;
+        setCouponLoading(true);
+        try {
+            const { data } = await api.post("/coupons/validate", { code: couponCode.trim().toUpperCase(), orderTotal: cartTotal });
+            setAppliedCoupon({ code: data.coupon.code, discount: data.discount });
+            toast.success(`Coupon applied! You save ${currency}${data.discount.toFixed(2)}`);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Invalid coupon code");
+        } finally {
+            setCouponLoading(false);
+        }
+    };
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode("");
+    };
 
     const handlePlaceOrder = async () => {
         setLoading(true);
@@ -54,6 +78,7 @@ const Checkout = () => {
                 })),
                 shippingAddress: address,
                 paymentMethod,
+                ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
             };
 
             const { data } = await api.post("/orders", orderData);
@@ -142,13 +167,43 @@ const Checkout = () => {
                     <div className="bg-white rounded-2xl p-5 h-fit sticky top-24 shadow-soft border border-app-border/60">
                         <h3 className="text-sm font-semibold text-app-green mb-4">Order Summary</h3>
 
+                        {/* Coupon */}
+                        <div className="mb-4">
+                            {appliedCoupon ? (
+                                <div className="flex items-center justify-between px-3 py-2 bg-green-50 rounded-xl border border-green-200">
+                                    <div className="flex items-center gap-2 text-sm text-app-green font-medium">
+                                        <TagIcon className="size-4" />
+                                        {appliedCoupon.code}
+                                    </div>
+                                    <button onClick={handleRemoveCoupon} className="text-app-text-light hover:text-app-error transition-colors">
+                                        <XIcon className="size-4" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Promo code"
+                                        value={couponCode}
+                                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                        onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+                                        className="flex-1 px-3 py-2 text-sm rounded-xl border border-app-border focus:border-app-green focus:ring-2 focus:ring-app-green/20 transition-all"
+                                    />
+                                    <button
+                                        onClick={handleApplyCoupon}
+                                        disabled={couponLoading || !couponCode.trim()}
+                                        className="px-3 py-2 text-sm font-medium bg-app-green text-white rounded-xl hover:bg-app-green/90 disabled:opacity-50 transition-all"
+                                    >
+                                        {couponLoading ? "..." : "Apply"}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                                 <span className="text-app-text-light">Subtotal ({items.length} items)</span>
-                                <span>
-                                    {currency}
-                                    {cartTotal.toFixed(2)}
-                                </span>
+                                <span>{currency}{cartTotal.toFixed(2)}</span>
                             </div>
 
                             <div className="flex justify-between">
@@ -158,18 +213,19 @@ const Checkout = () => {
 
                             <div className="flex justify-between">
                                 <span className="text-app-text-light">Tax</span>
-                                <span>
-                                    {currency}
-                                    {tax.toFixed(2)}
-                                </span>
+                                <span>{currency}{tax.toFixed(2)}</span>
                             </div>
+
+                            {appliedCoupon && (
+                                <div className="flex justify-between text-app-success">
+                                    <span>Discount ({appliedCoupon.code})</span>
+                                    <span>-{currency}{discount.toFixed(2)}</span>
+                                </div>
+                            )}
 
                             <div className="flex justify-between pt-3 border-t border-app-border text-base font-semibold">
                                 <span>Total</span>
-                                <span className="text-app-green">
-                                    {currency}
-                                    {total.toFixed(2)}
-                                </span>
+                                <span className="text-app-green">{currency}{total.toFixed(2)}</span>
                             </div>
                         </div>
                     </div>

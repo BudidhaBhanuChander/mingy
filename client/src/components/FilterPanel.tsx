@@ -6,14 +6,15 @@ interface Category {
 interface FilterPanelProps {
     categories: Category[];
     category: string;
-    minPrice: string | number;
-    maxPrice: string | number;
-    updateFilter: (key: string, value: string | number) => void;
+    organic: string;
+    minPrice: string;
+    maxPrice: string;
+    updateFilter: (key: string, value: string) => void;
     clearFilters: () => void;
     hasFilters: boolean;
 }
 
-const FilterPanel = ({ categories, category, minPrice, maxPrice, updateFilter, clearFilters, hasFilters }: FilterPanelProps) => {
+const FilterPanel = ({ categories, category, organic, minPrice, maxPrice, updateFilter, clearFilters, hasFilters }: FilterPanelProps) => {
     const categoriesWithAll: Category[] = [{ slug: "", name: "All Categories" }, ...categories];
 
     return (
@@ -40,6 +41,14 @@ const FilterPanel = ({ categories, category, minPrice, maxPrice, updateFilter, c
 
                     <input type="number" placeholder="Max" value={maxPrice} onChange={(e) => updateFilter("maxPrice", e.target.value)} className="w-full px-3 py-2 text-sm bg-white rounded-lg border border-app-border focus:border-app-green focus:ring-2 focus:ring-app-green/20 transition-all" />
                 </div>
+            </div>
+
+            {/* Organic */}
+            <div>
+                <h3 className="text-sm font-semibold text-app-green mb-3">Type</h3>
+                <button onClick={() => updateFilter("organic", organic === "true" ? "" : "true")} className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all ${organic === "true" ? "bg-linear-to-r from-app-green-light to-app-green text-white font-medium" : "text-app-text-light hover:bg-app-cream"}`}>
+                    Organic Only
+                </button>
             </div>
 
             {hasFilters && (

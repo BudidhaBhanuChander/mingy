@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import type { Product } from "../types";
-import { Plus, Star } from "lucide-react";
+import { Heart, Plus, Star } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 interface Props {
     product: Product;
@@ -10,8 +11,12 @@ interface Props {
 const ProductCard = ({ product }: Props) => {
     const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
 
-    const { addToCart } = useCart();
+    const { addToCart, items } = useCart();
+    const { isFavorite, toggleFavorite } = useFavorites();
     const navigate = useNavigate();
+    const cartItem = items.find((i) => i.product.id === product.id);
+    const cartQty = cartItem?.quantity ?? 0;
+    const fav = isFavorite(product.id);
 
     return (
         <div
@@ -36,6 +41,15 @@ const ProductCard = ({ product }: Props) => {
                         </span>
                     )}
                 </div>
+
+                {/* Heart / Favorite */}
+                <button
+                    onClick={(e) => { e.stopPropagation(); toggleFavorite(product); }}
+                    className="absolute top-3 right-3 size-7 rounded-full bg-white/80 backdrop-blur-sm flex-center shadow-soft hover:scale-110 active:scale-95 transition-all duration-200"
+                    aria-label={fav ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                    <Heart className={`size-4 transition-colors ${fav ? "fill-red-500 text-red-500" : "text-app-text-light"}`} />
+                </button>
             </div>
 
             {/* Info */}
@@ -72,10 +86,15 @@ const ProductCard = ({ product }: Props) => {
                             e.stopPropagation();
                             addToCart(product);
                         }}
-                        className="size-9 rounded-full bg-gradient-to-br from-app-orange to-app-orange-dark text-white flex-center shrink-0 shadow-glow hover:scale-110 hover:rotate-90 active:scale-95 transition-all duration-300"
+                        className="relative size-9 rounded-full bg-linear-to-br from-app-orange to-app-orange-dark text-white flex-center shrink-0 shadow-glow hover:scale-110 hover:rotate-90 active:scale-95 transition-all duration-300"
                         aria-label="Add to cart"
                     >
                         <Plus className="size-4" strokeWidth={2.5} />
+                        {cartQty > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 size-4 rounded-full bg-app-green text-white text-[10px] font-bold flex-center leading-none">
+                                {cartQty}
+                            </span>
+                        )}
                     </button>
                 </div>
             </div>

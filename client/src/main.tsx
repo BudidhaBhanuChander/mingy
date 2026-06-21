@@ -4,13 +4,22 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { CartProvider } from "./context/CartContext.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
+import { FavoritesProvider } from "./context/FavoritesContext.tsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ErrorBoundary } from "./components/ErrorBoundary.tsx";
 
 createRoot(document.getElementById("root")!).render(
-    <BrowserRouter>
-        <AuthProvider>
-            <CartProvider>
-                <App />
-            </CartProvider>
-        </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+            <BrowserRouter>
+                <AuthProvider>
+                    <CartProvider>
+                        <FavoritesProvider>
+                            <App />
+                        </FavoritesProvider>
+                    </CartProvider>
+                </AuthProvider>
+            </BrowserRouter>
+        </GoogleOAuthProvider>
+    </ErrorBoundary>
 );

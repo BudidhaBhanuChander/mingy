@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Product } from "../types";
 import Loading from "../components/Loading";
 import { ArrowLeftIcon, ArrowRightIcon, HomeIcon, LeafIcon, MinusIcon, PlusIcon, ShoppingCartIcon, StarIcon } from "lucide-react";
-import DummyReviewsSection from "../assets/DummyReviewsSection";
+import ReviewsSection from "../components/ReviewsSection";
 import ProductCard from "../components/ProductCard";
 import api from "../config/api";
 
@@ -177,7 +177,7 @@ const ProductPage = () => {
                 </div>
 
                 {/* Customer Reviews */}
-                {product.reviewCount > 0 && <DummyReviewsSection product={product} />}
+                {product.reviewCount > 0 && <ReviewsSection product={product} />}
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (

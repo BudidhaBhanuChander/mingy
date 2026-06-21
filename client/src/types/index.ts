@@ -70,6 +70,14 @@ export interface DeliveryPartner {
     createdAt: string;
 }
 
+export interface Review {
+    id: string;
+    user: { id: string; name: string; avatar: string };
+    rating: number;
+    comment: string;
+    createdAt: string;
+}
+
 export interface Order {
     id: string;
     user: string | { id: string; name: string; email: string; phone?: string };

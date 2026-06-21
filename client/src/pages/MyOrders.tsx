@@ -4,7 +4,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { statusColors } from "../assets/assets";
 import Loading from "../components/Loading";
-import { CalendarIcon, ChevronRightIcon, PackageIcon } from "lucide-react";
+import ReviewModal from "../components/ReviewModal";
+import { CalendarIcon, ChevronRightIcon, PackageIcon, StarIcon } from "lucide-react";
 import api from "../config/api";
 import toast from "react-hot-toast";
 
@@ -15,6 +16,8 @@ const MyOrders = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("all");
     const [searchParams, setSearchParams] = useSearchParams();
+    const [reviewOrderId, setReviewOrderId] = useState<string | null>(null);
+    const [reviewedOrders, setReviewedOrders] = useState<Set<string>>(new Set());
 
     const tabs = ["all", "Placed", "Out for Delivery", "Delivered"];
 
@@ -46,6 +49,14 @@ const MyOrders = () => {
     }, [activeTab]);
 
     return (
+        <>
+        {reviewOrderId && (
+            <ReviewModal
+                orderId={reviewOrderId}
+                onClose={() => setReviewOrderId(null)}
+                onSubmitted={() => setReviewedOrders((prev) => new Set([...prev, reviewOrderId!]))}
+            />
+        )}
         <div className="min-h-screen mb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <h1 className="text-2xl sm:text-3xl font-bold text-app-green mb-6">My Orders</h1>
@@ -107,10 +118,17 @@ const MyOrders = () => {
                                 <div className="flex justify-between items-center pt-3 text-sm">
                                     <span className="text-app-text-light">{order.items.length} items</span>
 
-                                    <span className="font-semibold text-app-green">
-                                        {currency}
-                                        {order.total.toFixed(2)}
-                                    </span>
+                                    <div className="flex items-center gap-3">
+                                        {order.status === "Delivered" && !reviewedOrders.has(order.id) && (
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); setReviewOrderId(order.id); }}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-app-warning border border-app-warning/40 rounded-full hover:bg-amber-50 transition-colors"
+                                            >
+                                                <StarIcon className="size-3.5 fill-app-warning text-app-warning" /> Rate Order
+                                            </button>
+                                        )}
+                                        <span className="font-semibold text-app-green">{currency}{order.total.toFixed(2)}</span>
+                                    </div>
                                 </div>
                             </Link>
                         ))}
@@ -118,6 +136,7 @@ const MyOrders = () => {
                 )}
             </div>
         </div>
+        </>
     );
 };
 

@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon, BikeIcon, ChevronDownIcon, LogOutIcon, MapPinIcon, MenuIcon, PackageIcon, SearchIcon, ShieldIcon, ShoppingCartIcon, UserIcon, XIcon } from "lucide-react";
+import { ArrowUpRightIcon, BikeIcon, ChevronDownIcon, HeartIcon, LogOutIcon, MapPinIcon, MenuIcon, PackageIcon, SearchIcon, ShieldIcon, ShoppingCartIcon, UserIcon, XIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
@@ -96,6 +96,12 @@ const Navbar = () => {
                                             {user && (
                                                 <Link to="/orders" className="dropdown-link">
                                                     <PackageIcon size={16} /> My Orders{" "}
+                                                </Link>
+                                            )}
+
+                                            {user && (
+                                                <Link to="/favorites" className="dropdown-link">
+                                                    <HeartIcon size={16} /> Wishlist{" "}
                                                 </Link>
                                             )}
 
