@@ -67,7 +67,7 @@ const Login = () => {
             const { data } = await api.post("/auth/google", { idToken: credentialResponse.credential });
             setUserFromToken(data.user, data.token);
             toast.success(`Welcome, ${data.user.name}!`);
-            navigate("/");
+            navigate("/", { replace: true });
         } catch (err: any) {
             toast.error(err.response?.data?.message || "Google sign-in failed");
         }
@@ -109,11 +109,11 @@ const Login = () => {
             const credential = await confirmResult.confirm(otp);
             const idToken = await credential.user.getIdToken();
             const { data } = await api.post("/auth/phone", { idToken });
-            // persist to localStorage BEFORE navigating so AuthContext reads it on mount
-            localStorage.setItem("auth_token", data.token);
-            localStorage.setItem("auth_user", JSON.stringify(data.user));
+            // Set React auth state + localStorage, then SPA-navigate (no full reload,
+            // so no re-fetch storm / navigation race that caused the blank page).
+            setUserFromToken(data.user, data.token);
             toast.success("Phone login successful!");
-            setTimeout(() => { window.location.replace("/"); }, 300);
+            navigate("/", { replace: true });
         } catch (err: any) {
             toast.error(err.response?.data?.message || "Invalid OTP. Try again.");
             setPhoneLoading(false);

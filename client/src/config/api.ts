@@ -13,20 +13,15 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Handle auth errors globally
+// Handle auth errors globally.
+// IMPORTANT: do NOT hard-redirect here. A blanket `window.location` redirect on
+// any 401 races with normal navigation (e.g. right after social/phone login the
+// page reloads on "/", a background request like GET /favorites may briefly 401,
+// and this would wipe auth + force a redirect -> blank page). Route guards
+// (ProtectedRoute) are responsible for sending unauthenticated users to /login.
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem("auth_token");
-            localStorage.removeItem("auth_user");
-            // Only redirect if not already on auth pages
-            if (!window.location.pathname.includes("/login") && !window.location.pathname.includes("/register")) {
-                window.location.href = "/login";
-            }
-        }
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 export default api;
