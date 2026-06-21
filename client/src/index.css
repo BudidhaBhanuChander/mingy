@@ -121,9 +121,19 @@ select:focus {
 
 /* Glassmorphism */
 .glass {
-    background: rgb(255 255 255 / 0.7);
+    /* Solid fallback first so content never bleeds through if backdrop-filter
+       is unsupported / disabled (the navbar collision-on-scroll issue). */
+    background: rgb(255 255 255 / 0.96);
     backdrop-filter: blur(14px) saturate(150%);
     -webkit-backdrop-filter: blur(14px) saturate(150%);
+}
+
+/* Where the browser DOES support backdrop blur, we can soften the glass a touch
+   while still keeping it opaque enough to fully hide scrolled content. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+        background: rgb(255 255 255 / 0.85);
+    }
 }
 
 /* Buttons */
