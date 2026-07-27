@@ -6,6 +6,7 @@
     "scripts": {
         "postinstall": "npx prisma generate",
         "start": "tsx server.ts",
+        "start:prod": "npx prisma db push && node dist/server.js",
         "server": "nodemon --exec tsx server.ts",
         "check-env": "tsx scripts/validateEnv.ts",
         "build": "tsc",

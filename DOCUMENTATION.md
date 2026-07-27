@@ -163,7 +163,7 @@ grocery-delivery-fullstack/
 │   ├── package.json
 │   ├── tsconfig.json
 │   ├── vite.config.ts
-│   └── vercel.json
+│   └── vercel.json            # Legacy deployment config
 │
 └── server/                    ← Express backend
     ├── config/
@@ -199,7 +199,7 @@ grocery-delivery-fullstack/
     ├── server.ts              ← Express app entry point
     ├── seed.ts                ← Database seed script
     ├── package.json
-    └── vercel.json
+    └── vercel.json            # Legacy server deployment config
 ```
 
 ---
@@ -661,24 +661,24 @@ Copy the `whsec_...` signing secret it outputs into your `server/.env`.
 
 ## 14. Deployment
 
-Both client and server include `vercel.json` configuration for deployment on Vercel.
+The frontend stays a static Vite app, while the backend is now packaged as a container so it can run on AWS or Azure.
 
-### Client (Vercel)
+### Client
 - Build command: `tsc -b && vite build`
 - Output directory: `dist`
-- Set `VITE_BASE_URL` to your deployed server URL in Vercel environment variables
+- Set `VITE_BASE_URL` to the deployed backend URL in the hosting environment
 
-### Server (Vercel)
-- The `vercel.json` routes all traffic to `server.ts`
-- `postinstall` script runs `prisma generate` automatically
-- Switch `DATABASE_URL` to your Neon PostgreSQL connection string for production
-- Add all server environment variables in the Vercel project settings
+### Server
+- Build the container from `server/Dockerfile`
+- `postinstall` still runs `prisma generate`
+- Use a managed Postgres `DATABASE_URL` for production
+- Store all server environment variables in AWS or Azure secrets
 
 ### Production Database
-Replace the local SQLite `DATABASE_URL` with a Neon serverless Postgres URL:
+Replace the local SQLite `DATABASE_URL` with the production Postgres URL:
 
 ```
 DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/neondb?sslmode=require
 ```
 
-Run `npx prisma migrate deploy` after first deployment.
+Run `npx prisma migrate deploy` after the first production deployment.

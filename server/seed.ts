@@ -1,4 +1,5 @@
 import { prisma } from "./config/prisma.js";
+import bcrypt from "bcrypt";
 
 const seedDB = async () => {
     try {
@@ -361,6 +362,47 @@ const seedDB = async () => {
 
         await prisma.product.createMany({ data: products });
         console.log(`Created ${products.length} products`);
+
+        // Seed Users (Admin & Standard)
+        await prisma.user.deleteMany({});
+        console.log("Cleared existing users");
+
+        const hashedPassword = await bcrypt.hash("password123", 10);
+        
+        await prisma.user.createMany({
+            data: [
+                {
+                    name: "Admin User",
+                    email: "admin@example.com", // Matches ADMIN_EMAILS in .env
+                    password: hashedPassword,
+                    phone: "1234567890",
+                },
+                {
+                    name: "Test User",
+                    email: "user@example.com",
+                    password: hashedPassword,
+                    phone: "0987654321",
+                }
+            ]
+        });
+        console.log("Created Admin & Standard users (Password: password123)");
+
+        // Seed Delivery Partner
+        await prisma.deliveryPartner.deleteMany({});
+        console.log("Cleared existing delivery partners");
+
+        await prisma.deliveryPartner.create({
+            data: {
+                name: "Test Delivery Partner",
+                email: "delivery@example.com",
+                password: hashedPassword,
+                phone: "1122334455",
+                vehicleType: "bike",
+                isActive: true
+            }
+        });
+        console.log("Created Delivery Partner (Password: password123)");
+
 
         console.log("Seed completed successfully!");
         process.exit(0);

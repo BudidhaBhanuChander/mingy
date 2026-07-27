@@ -30,10 +30,11 @@ api.interceptors.response.use(
             config._retry = true;
             
             // Switch to the secondary URL if we were using the primary, or vice-versa
-            const currentBase = config.baseURL || baseUrl;
-            const newBase = currentBase === primaryUrl ? secondaryUrl : primaryUrl;
+            const currentUrl = config.baseURL || baseUrl || config.url || "";
+            const isAws = currentUrl.includes("awsapprunner");
+            const newBase = isAws ? secondaryUrl : primaryUrl;
             
-            console.warn(`[Multi-Cloud Failover] Switching backend from ${currentBase} to ${newBase}`);
+            console.warn(`[Multi-Cloud Failover] Switching backend to ${newBase}`);
             
             // Update the request config with the new base URL
             config.baseURL = newBase;

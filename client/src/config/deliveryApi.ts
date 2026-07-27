@@ -26,9 +26,10 @@ deliveryApi.interceptors.response.use(
             (!error.response || error.response.status >= 500)
         ) {
             config._retry = true;
-            const currentBase = config.baseURL || baseUrl;
-            const newBase = currentBase === primaryUrl ? secondaryUrl : primaryUrl;
-            console.warn(`[Multi-Cloud Failover] Switching backend from ${currentBase} to ${newBase}`);
+            const currentUrl = config.baseURL || baseUrl || config.url || "";
+            const isAws = currentUrl.includes("awsapprunner");
+            const newBase = isAws ? secondaryUrl : primaryUrl;
+            console.warn(`[Multi-Cloud Failover] Switching backend to ${newBase}`);
             config.baseURL = newBase;
             return axios(config);
         }
