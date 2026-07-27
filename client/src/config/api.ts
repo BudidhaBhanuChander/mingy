@@ -1,7 +1,8 @@
 import axios from "axios";
+import { baseUrl, primaryUrl, secondaryUrl } from "./baseUrl";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
+    baseURL: baseUrl,
 });
 
 // Inject JWT token from localStorage into every request
@@ -13,15 +14,36 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Handle auth errors globally.
-// IMPORTANT: do NOT hard-redirect here. A blanket `window.location` redirect on
-// any 401 races with normal navigation (e.g. right after social/phone login the
-// page reloads on "/", a background request like GET /favorites may briefly 401,
-// and this would wipe auth + force a redirect -> blank page). Route guards
-// (ProtectedRoute) are responsible for sending unauthenticated users to /login.
+// Implement Client-Side Multi-Cloud Load Balancing (Failover)
 api.interceptors.response.use(
     (response) => response,
-    (error) => Promise.reject(error)
+    async (error) => {
+        const config = error.config;
+        
+        // If the request fails due to network error or 5xx server error, and we haven't retried yet
+        if (
+            config &&
+            !config._retry &&
+            import.meta.env.PROD && // Only failover in production
+            (!error.response || error.response.status >= 500)
+        ) {
+            config._retry = true;
+            
+            // Switch to the secondary URL if we were using the primary, or vice-versa
+            const currentBase = config.baseURL || baseUrl;
+            const newBase = currentBase === primaryUrl ? secondaryUrl : primaryUrl;
+            
+            console.warn(`[Multi-Cloud Failover] Switching backend from ${currentBase} to ${newBase}`);
+            
+            // Update the request config with the new base URL
+            config.baseURL = newBase;
+            
+            // Retry the request
+            return axios(config);
+        }
+        
+        return Promise.reject(error);
+    }
 );
 
 export default api;
